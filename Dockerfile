@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install -g npm@latest && npm install --legacy-peer-deps
+RUN npm install npm install --legacy-peer-deps
 
 RUN npm run postinstall
 
