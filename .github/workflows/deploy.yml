@@ -1,0 +1,45 @@
+name: NextAuth App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy to VPS using SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          port: 2222
+          script: |
+            export DATABASE_URL=${{ secrets.DATABASE_URL }}
+            export AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            export NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            export NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+            export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            export GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            export GH_CLIENT_ID=${{ secrets.GH_CLIENT_ID }}
+            export GH_CLIENT_SECRET=${{ secrets.GH_CLIENT_SECRET }}
+            export RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+
+            cd /home/rafik/nextauth
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
