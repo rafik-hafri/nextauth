@@ -3,22 +3,26 @@ version: '3.8'
 services:
   app:
     build:
-      context: .  
-      dockerfile: Dockerfile 
-      args:
-        DATABASE_URL: ${DATABASE_URL}
+      context: .
+      dockerfile: Dockerfile
     container_name: nextauth-app
     working_dir: /app
     ports:
-      - "3001:3000" 
+      - "3001:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - AUTH_SECRET=${AUTH_SECRET}  
-      - NEXTAUTH_URL=${NEXTAUTH_URL}  
+      - AUTH_SECRET=${AUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GH_CLIENT_ID=${GH_CLIENT_ID}
       - GH_CLIENT_SECRET=${GH_CLIENT_SECRET}
       - RESEND_API_KEY=${RESEND_API_KEY}
-    command: ["npm", "run", "start"]  
+    command: ["npm", "run", "start"]
+    networks:
+      - shared-postgres-network
+
+networks:
+  shared-postgres-network:
+    external: true
