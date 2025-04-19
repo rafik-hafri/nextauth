@@ -35,7 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
       
-      async jwt({token}){
+      async jwt({token, trigger, session}){
         if (!token.sub){
           return token
         }
@@ -43,6 +43,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if(!existingUser){
           return token
         }
+        if (trigger === "update" && session) {
+          token = {...token, user : session}
+          return token;
+        };
         const existingAccount = await getAccountByUserId(existingUser.id)
 
         token.isOAuth = !!existingAccount

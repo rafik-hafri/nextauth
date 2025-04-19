@@ -19,7 +19,7 @@ services:
       - GH_CLIENT_ID=${GH_CLIENT_ID}
       - GH_CLIENT_SECRET=${GH_CLIENT_SECRET}
       - RESEND_API_KEY=${RESEND_API_KEY}
-    command: ["npm", "run", "start"]  # Start the app normally without migrations
+    command: ["npm", "run", "start"]  
     networks:
       - shared-postgres-network
 
