@@ -1,4 +1,4 @@
-name: NextAuth App
+name: Deploy NextAuth App
 
 on:
   push:
@@ -40,6 +40,9 @@ jobs:
             export RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
 
             cd /home/rafik/nextauth
-            git pull origin main
+            git pull origin main  # Pull the latest changes from the main branch
+
+            docker exec -it nextauth-app sh -c "npx prisma migrate reset --force && npx prisma migrate deploy"
+
             docker-compose down
             docker-compose up -d --build
